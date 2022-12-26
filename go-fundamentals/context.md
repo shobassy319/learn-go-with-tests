@@ -161,6 +161,7 @@ func Server(store Store) http.HandlerFunc {
 
 ```go
 t.Run("returns data from store", func(t *testing.T) {
+    data := "hello, world"
     store := &SpyStore{response: data}
     svr := Server(store)
 
