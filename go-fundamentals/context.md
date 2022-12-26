@@ -214,18 +214,24 @@ func Server(store Store) http.HandlerFunc {
 スパイでアサーションメソッドを作成することで、テストコードを少しリファクタリングできます。
 
 ```go
+type SpyStore struct {
+	response  string
+	cancelled bool
+	t         *testing.T 
+}
+
 func (s *SpyStore) assertWasCancelled() {
-    s.t.Helper()
-    if !s.cancelled {
-        s.t.Errorf("store was not told to cancel")
-    }
+	s.t.Helper()
+	if !s.cancelled {
+		s.t.Error("store was not told to cancel")
+	}
 }
 
 func (s *SpyStore) assertWasNotCancelled() {
-    s.t.Helper()
-    if s.cancelled {
-        s.t.Errorf("store was told to cancel")
-    }
+	s.t.Helper()
+	if s.cancelled {
+		s.t.Error("store was told to cancel")
+	}
 }
 ```
 
@@ -360,6 +366,7 @@ func (s *SpyStore) Fetch(ctx context.Context) (string, error) {
 
 ```go
 t.Run("returns data from store", func(t *testing.T) {
+    data := "hello, world"
     store := &SpyStore{response: data, t: t}
     svr := Server(store)
 
